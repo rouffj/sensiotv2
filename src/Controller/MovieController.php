@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\InMemoryMovieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,12 +12,20 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class MovieController extends AbstractController
 {
+    private $movieRepository;
+
+    public function __construct()
+    {
+        $this->movieRepository = new InMemoryMovieRepository();
+    }
+
     /**
      * @Route("/{id}", name="detail", requirements={"id": "\d+"})
      */
     public function movieDetail($id): Response
     {
         return $this->render('movie/movie-details.html.twig', [
+            'movie' => $this->movieRepository->getMovieById($id)
         ]);
     }
 
@@ -44,5 +53,4 @@ class MovieController extends AbstractController
     {
         return new Response('The movie id is ' . $id);
     }
-
 }
