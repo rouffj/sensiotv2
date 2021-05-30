@@ -56,6 +56,11 @@ class User implements UserInterface
     private $roles = [];
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $loginAt;
+
+    /**
      * A visual identifier that represents this user.
      *
      * @see UserInterface
@@ -201,6 +206,14 @@ class User implements UserInterface
                 $review->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+
+    public function setLoginAt(\Datetime $loginAt): self
+    {
+        $this->loginAt = $loginAt;
 
         return $this;
     }

@@ -45,6 +45,10 @@ services:
             #- https://run.mocky.io/v3/870e0928-190e-485c-b456-b51cb89ce863
         public: true
 
+    #App\Listener\LastLoginListener:
+    #    tags:
+    #        - 'security.interactive_login'
+
 
 
 
