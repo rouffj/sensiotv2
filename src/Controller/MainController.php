@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Omdb\OmdbClient;
 use App\Repository\InMemoryMovieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,9 +12,10 @@ class MainController extends AbstractController
 {
     private $movieRepository;
 
-    public function __construct()
+    public function __construct(OmdbClient $omdbClient)
     {
         $this->movieRepository = new InMemoryMovieRepository();
+        $this->omdbClient = $omdbClient;
     }
 
     /**
@@ -22,6 +24,8 @@ class MainController extends AbstractController
      */
     public function index(): Response
     {
+        //$this->container->get(OmdbClient::class);
+        $this->omdbClient->requestByTitle('Lord of the rings');
         return $this->render('main/index.html.twig', [
             'movies' => $this->movieRepository->getMovies()
         ]);

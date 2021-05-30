@@ -8,17 +8,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 use App\Entity\Movie;
 use App\Entity\User;
 use App\Entity\Review;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
     /**
      * @Route("/register.html", name="register")
      */
-    public function register(Request $request, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         //$form = $this->createForm('App\Form\RegisterType');
         $form = $this->createForm(RegisterType::class);
@@ -26,6 +28,8 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
+            $encodedPassword = $passwordEncoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($encodedPassword);
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -40,11 +44,11 @@ class UserController extends AbstractController
     /**
      * @Route("/login.html", name="login")
      */
-    public function login(): Response
-    {
-        return $this->render('user/login.html.twig', [
-        ]);
-    }
+    //public function login(): Response
+    //{
+    //    return $this->render('user/login.html.twig', [
+    //    ]);
+    //}
 
     /**
      * @Route("/user-cart.html", name="cart")
@@ -107,6 +111,31 @@ class UserController extends AbstractController
     {
         return $this->render('user/user-watchlist.html.twig', [
         ]);
+    }
+
+    /**
+     * @Route("/login.html", name="app_login")
+     */
+    public function login(AuthenticationUtils $authenticationUtils): Response
+    {
+        // if ($this->getUser()) {
+        //     return $this->redirectToRoute('target_path');
+        // }
+
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('user/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+    }
+
+    /**
+     * @Route("/logout", name="app_logout")
+     */
+    public function logout()
+    {
+        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
 }

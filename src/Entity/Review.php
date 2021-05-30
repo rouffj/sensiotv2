@@ -34,11 +34,6 @@ class Review
      */
     private $user;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getBody(): ?string
     {
         return $this->body;
